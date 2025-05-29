@@ -104,8 +104,9 @@ html {
   background: var(--cloud-base-color, #f8f9fa);
   border-radius: 50%;
   opacity: 0;
-  pointer-events: none;
+  pointer-events: auto;
   transition: opacity 1s ease-out, transform 0.5s ease-out;
+  cursor: pointer;
 }
 
 .cloud::before,
@@ -469,4 +470,9 @@ input[type='range']::-moz-range-thumb {
 .danger-button:hover {
   background-color: #c82333;
   border-color: #bd2130;
+}
+
+.cloud:hover {
+  filter: brightness(1.1);
+  transform: scale(1.05);
 }

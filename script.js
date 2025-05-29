@@ -27,6 +27,12 @@ let config = {
   manualTheme: false,
   activeManualThemeKey: 'morning',
   starRespawnInterval: 7000,
+  cloudLinks: [
+    'https://discord.com/vanityurl/dotcom/steakpants/flour/flower/index11.html',
+    'https://www.youtube.com/watch?v=9wvEwPLcLcA',
+    'https://www.youtube.com/watch?v=atgsMDLGp6o',
+    'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+  ]
 };
 
 const CONFIG_STORAGE_KEY = 'skySimulatorConfig';
@@ -215,7 +221,45 @@ function createCloud() {
   c.className = `cloud cloud-type-${type}`;
   c.style.cssText = `--target-opacity:${(Math.random() * 3 + 7) / 10};opacity:var(--target-opacity);transform:scaleX(${
     Math.random() + 0.9
-  });top:${Math.random() * 95}vh;left:-400px;animation:moveCloud ${speed}s linear forwards;`;
+  });top:${Math.random() * 95}vh;left:-400px;animation:moveCloud ${speed}s linear forwards;cursor:pointer;`;
+  
+  const isLinkCloud = Math.random() < 0.2;
+  if (isLinkCloud) {
+    const randomLink = config.cloudLinks[Math.floor(Math.random() * config.cloudLinks.length)];
+    c.style.cursor = 'pointer';
+    c.title = 'Click to visit link';
+    c.onclick = (e) => {
+      e.preventDefault();
+      window.open(randomLink, '_blank');
+    };
+  } else {
+    c.style.cursor = 'pointer';
+    c.title = 'Click to pop cloud';
+    c.onclick = () => {
+      c.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+      c.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.8)';
+      c.style.transition = 'opacity 2s ease-out, filter 2s ease-out, transform 2s ease-out';
+      
+      const before = c.querySelector('::before');
+      const after = c.querySelector('::after');
+      if (before) before.style.transition = 'all 2s ease-out';
+      if (after) after.style.transition = 'all 2s ease-out';
+      
+      let opacity = 1;
+      const fadeInterval = setInterval(() => {
+        opacity -= 0.05;
+        if (opacity <= 0) {
+          clearInterval(fadeInterval);
+          c.remove();
+        } else {
+          c.style.opacity = opacity;
+          c.style.transform = `scaleX(${Math.random() + 0.9}) scale(${1 + (1 - opacity) * 0.5})`;
+          c.style.filter = `blur(${(1 - opacity) * 5}px)`;
+        }
+      }, 100);
+    };
+  }
+  
   c.addEventListener('animationend', () => c.remove(), { once: true });
   if (elements.cloudContainer) {
     elements.cloudContainer.appendChild(c);
